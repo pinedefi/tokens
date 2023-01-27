@@ -1,36 +1,3 @@
-ERC20
-
- Copy to Clipboard
- Open in Remix
- Download
-settings
-Name
-Pine
-Symbol
-PINE
-Premint
-200000000
-features
-Mintable
-Burnable
-Pausable
-Permit
-Votes
-Flash Minting
-Snapshots
-access control
-
-Ownable
-Roles
-upgradeability
-
-Transparent
-UUPS
-info
-Security Contact
-security@example.com
-License
-MIT
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
