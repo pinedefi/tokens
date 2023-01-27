@@ -1,12 +1,10 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.3;
 
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
-contract VEPine is Ownable, ERC20 {
-  using SafeMath for uint256;
+contract VEPine is OwnableUpgradeable, ERC20Upgradeable {
   address public pine;
 
   struct StakeInfo {
@@ -24,11 +22,13 @@ contract VEPine is Ownable, ERC20 {
   event Claimed(address claimer, uint256 amount, uint256 timestamp);
   event Withdrew(address user, uint256 amount, uint256 timestamp);
 
-  constructor(
+  function init(
     address _pine, 
     string memory _name, 
     string memory _symbol
-  ) ERC20(_name, _symbol) {
+  ) external initializer {
+    __Ownable_init();
+    __ERC20_init(_name, _symbol);
     pine = _pine;
   }
 
@@ -58,16 +58,16 @@ contract VEPine is Ownable, ERC20 {
   }
 
   function burn(uint256 _amount) external {
-      require(ERC20(pine).transferFrom(_msgSender(), pine, _amount));
+      require(ERC20Upgradeable(pine).transferFrom(_msgSender(), pine, _amount));
     burnt[_msgSender()] += _amount;
   }
 
   function stake(uint256 _amount) external {
     require(_amount > 0, "invalid amount");
-    require(ERC20(pine).balanceOf(_msgSender()) >= _amount, "insufficient amount.");
-    require(ERC20(pine).allowance(_msgSender(), address(this)) >= _amount, "insufficient allowance amount.");
+    require(ERC20Upgradeable(pine).balanceOf(_msgSender()) >= _amount, "insufficient amount.");
+    require(ERC20Upgradeable(pine).allowance(_msgSender(), address(this)) >= _amount, "insufficient allowance amount.");
 
-    require(ERC20(pine).transferFrom(_msgSender(), address(this), _amount) == true, "transfer failed.");
+    require(ERC20Upgradeable(pine).transferFrom(_msgSender(), address(this), _amount) == true, "transfer failed.");
 
     if (staking[_msgSender()].totalAmount == 0) {
       users.push(_msgSender());
@@ -101,7 +101,7 @@ contract VEPine is Ownable, ERC20 {
       staking[_msgSender()].amounts[i] -= amount;
     }
 
-    require(ERC20(pine).transfer(_msgSender(), amount) == true, "withdraw failed.");
+    require(ERC20Upgradeable(pine).transfer(_msgSender(), amount) == true, "withdraw failed.");
     
     staking[_msgSender()].totalAmount -= amount;
     staking[_msgSender()].lastWithdrawalAt = block.timestamp;
