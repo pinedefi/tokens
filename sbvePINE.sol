@@ -3,8 +3,9 @@ pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/extensions/ERC20SnapshotUpgradeable.sol";
 
-contract VEPine is OwnableUpgradeable, ERC20Upgradeable {
+contract VEPine is OwnableUpgradeable, ERC20Upgradeable, ERC20SnapshotUpgradeable {
   address public pine;
 
   struct StakeInfo {
@@ -29,7 +30,19 @@ contract VEPine is OwnableUpgradeable, ERC20Upgradeable {
   ) external initializer {
     __Ownable_init();
     __ERC20_init(_name, _symbol);
+    __ERC20Snapshot_init();
     pine = _pine;
+  }
+
+  function snapshot() public onlyOwner {
+      _snapshot();
+  }
+
+  function _beforeTokenTransfer(address from, address to, uint256 amount)
+      internal
+      override(ERC20Upgradeable, ERC20SnapshotUpgradeable)
+  {
+      super._beforeTokenTransfer(from, to, amount);
   }
 
   function totalSupply() public override view returns (uint256) {

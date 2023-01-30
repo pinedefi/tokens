@@ -21,7 +21,7 @@ enum Box {
 
 interface IBox {
     function boxValue(Box boxType) external returns (uint256);
-    function mintBox(address to) external;
+    function mintBox(address to, Box boxType) external;
 }
 
 struct Batch{
@@ -34,7 +34,7 @@ struct Batch{
     bytes32 s;
 }
 
-contract Pine is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUpgradeable {
+contract PinePoints is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUpgradeable {
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
         _disableInitializers();
@@ -75,7 +75,7 @@ contract Pine is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUp
 
     function mintBox(Box boxType) external {
         _transfer(msg.sender, address(box), box.boxValue(boxType));
-        box.mintBox(msg.sender);
+        box.mintBox(msg.sender, boxType);
     }
 
     function pause() public onlyOwner {

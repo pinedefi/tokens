@@ -4,7 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/token/ERC1155/ERC1155Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
-import { Box, IBox, Points } from "./PinePoints.sol";
+import { Box, IBox, PinePoints } from "./PinePoints.sol";
 
 contract PineMystery is Initializable, ERC1155Upgradeable, OwnableUpgradeable, IBox {
     /// @custom:oz-upgrades-unsafe-allow constructor
@@ -12,11 +12,11 @@ contract PineMystery is Initializable, ERC1155Upgradeable, OwnableUpgradeable, I
         _disableInitializers();
     }
 
-    Points pointsContract;
+    PinePoints pointsContract;
 
     mapping (Box => uint256) public boxValue;
 
-    function initialize(Points _pointsContract) initializer public {
+    function initialize(PinePoints _pointsContract) initializer public {
         __ERC1155_init("");
         __Ownable_init();
         pointsContract = _pointsContract;
