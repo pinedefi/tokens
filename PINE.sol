@@ -13,11 +13,11 @@ contract Pine is Initializable, ERC20Upgradeable, PausableUpgradeable, OwnableUp
     }
 
     function initialize() initializer public {
-        __ERC20_init("Pine", "PINE");
+        __ERC20_init("Pine Token", "PINE");
         __Pausable_init();
         __Ownable_init();
 
-        _mint(msg.sender, 200000000 * 10 ** decimals());
+        _mint(msg.sender, 200_000_000 * 10 ** decimals());
     }
 
     function pause() public onlyOwner {

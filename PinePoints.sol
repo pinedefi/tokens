@@ -55,14 +55,16 @@ contract PinePoints is Initializable, ERC20Upgradeable, PausableUpgradeable, Own
     }
 
     function lazyMint(address to, uint256 amount, Category category, uint16[] calldata year_month_day_hour, uint8 v, bytes32 r, bytes32 s) external {
-        require(!claimed[keccak256(abi.encode(to, category, year_month_day_hour))], "Batch already claimed");
-        require(signer == ecrecover(keccak256(abi.encode(to, amount, category, year_month_day_hour)), v, r, s), "Signature wrong");
-        claimed[keccak256(abi.encode(to, category, year_month_day_hour))] = true;
+        bytes32 pointHash = keccak256(abi.encode(to, category, year_month_day_hour));
+        require(!claimed[pointHash], "Batch already claimed");
+        require(signer == ecrecover(pointHash, v, r, s), "Signature wrong");
+        claimed[pointHash] = true;
         _mint(to, amount);
         emit Claimed(to, category, year_month_day_hour, amount);
     }
 
     function batchLazyMint(Batch[] calldata batches) external {
+        // RISK-05: acknowledged. This will be controlled by frontend
         for (uint i; i< batches.length;) {
             try this.lazyMint(batches[i].to, batches[i].amount, batches[i].category, batches[i].year_month_day_hour, batches[i].v, batches[i].r, batches[i].s) {} catch {
 
